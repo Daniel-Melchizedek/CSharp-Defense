@@ -193,12 +193,14 @@ namespace APM.SL.Test
     {
       // Arrange
       string cost = "50";
-      string price = null;
+
+      string price = null!;
+      cost = null!;
       var product = new Product();
 
       // Act & Assert
       var ex = Assert.Throws<ArgumentException>(() => 
-	                              product.CalculateMargin(cost, price));
+	                              product.CalculateMargin(cost, price!));
       Assert.Equal("Please enter the price (Parameter 'price')", ex.Message);
     }
 
@@ -206,13 +208,13 @@ namespace APM.SL.Test
     public void CalculateMargin_WhenInvalidCostIsNull_ShouldGenerateError()
     {
       // Arrange
-      string cost = null;
+      string? cost = null;
       string price = "100";
       var product = new Product();
 
       // Act & Assert
       var ex = Assert.Throws<ArgumentException>(() => 
-	                              product.CalculateMargin(cost, price));
+	                              product.CalculateMargin(cost!, price));
       Assert.Equal("Please enter the cost (Parameter 'cost')", ex.Message);
     }
 
@@ -308,12 +310,12 @@ namespace APM.SL.Test
     {
       // Arrange
       var price = 200;
-      Discount discount = null;
+      Discount? discount = null;
       var product = new Product();
 
       // Act & Assert
       var ex = Assert.Throws<ArgumentException>(() => 
-	                  product.CalculateTotalDiscount(price, discount));
+	                  product.CalculateTotalDiscount(price, discount!));
       Assert.Equal("Please specify a discount", ex.Message);
     }
 
@@ -331,6 +333,22 @@ namespace APM.SL.Test
       // Act & Assert
       var ex = Assert.Throws<ArgumentException>(() => product.CalculateTotalDiscount(price, discount));
       Assert.Equal("Please enter the price", ex.Message);
+    }
+
+    [Fact]
+    public void CalculateTotalDiscount_WhenPercentOffIsNull_ShouldReturnError()
+    {
+      // Arrange
+      var price = 200;
+      var discount = new Discount()
+      {
+        PercentOff = null
+      };
+      var product = new Product();
+
+      // Act & Assert
+      var ex = Assert.Throws<ArgumentException>(() => product.CalculateTotalDiscount(price, discount));
+      Assert.Equal("Please specify a discount", ex.Message);
     }
 
     //
@@ -445,7 +463,7 @@ namespace APM.SL.Test
 
       // Assert
       Assert.Equal(expected, actual);
-      Assert.Equal("Date must be at least 7 days from today", message);
+      Assert.Equal("Dateï¿½mustï¿½beï¿½at least 7 days fromï¿½today", message);
     }
 
     [Fact]
@@ -461,7 +479,7 @@ namespace APM.SL.Test
 
       // Assert
       Assert.Equal(expected, actual);
-      Assert.Equal("Date must be at least 7 days from today", message);
+      Assert.Equal("Dateï¿½mustï¿½beï¿½at least 7 days fromï¿½today", message);
     }
 
     [Fact]
@@ -469,7 +487,7 @@ namespace APM.SL.Test
     {
       // Arrange
       DateTime? effectiveDate = DateTime.Now;
-      var expected = (IsValid: false, Message: "Date must be at least 7 days from today");
+      var expected = (IsValid: false, Message: "Dateï¿½mustï¿½beï¿½at least 7 days fromï¿½today");
       var product = new Product();
 
       // Act
@@ -486,7 +504,7 @@ namespace APM.SL.Test
     {
       // Arrange
       DateTime? effectiveDate = DateTime.Now;
-      var expected = new OperationResult() { Success = false, ValidationMessage = "Date must be at least 7 days from today" };
+      var expected = new OperationResult() { Success = false, ValidationMessage = "Dateï¿½mustï¿½beï¿½at least 7 days fromï¿½today" };
       var product = new Product();
 
       // Act
@@ -502,12 +520,12 @@ namespace APM.SL.Test
     {
       // Arrange
       DateTime? effectiveDate = DateTime.Now;
-      var expected = new OperationResult() { Success = false, ValidationMessage = "Date must be at least 7 days from today" };
+      var expected = new OperationResult() { Success = false, ValidationMessage = "Dateï¿½mustï¿½beï¿½at least 7 days fromï¿½today" };
       var product = new Product();
 
       // Act & Assert
       var ex = Assert.Throws<ArgumentException>(() => product.ValidateEffectiveDateWithException(effectiveDate));
-      Assert.Equal("Date must be at least 7 days from today", ex.Message);
+      Assert.Equal("Dateï¿½mustï¿½beï¿½at least 7 days fromï¿½today", ex.Message);
     }
   }
 }

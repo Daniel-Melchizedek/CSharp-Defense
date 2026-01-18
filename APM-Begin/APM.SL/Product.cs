@@ -12,15 +12,15 @@ namespace APM.SL
     public int ProductId { get; set; }
 
     // Reference Types
-    public string Category { get; set; }
+    public string Category { get; set; } = string.Empty;
 
-    public List<Discount> Discounts { get; set; }
+    public List<Discount>? Discounts { get; set; }
 
-    public Discount ProductDiscount { get; set; }
+    public Discount? ProductDiscount { get; set; }
 
-    public string ProductName { get; set; }
+    public string ProductName { get; set; } = string.Empty;
 
-    public string Reason { get; set; }
+    public string Reason { get; set; } = string.Empty;
 
 
 
@@ -31,28 +31,47 @@ namespace APM.SL
     /// <param name="priceInput">Suggested price in dollars and cents (from user input as string)</param>
     /// <returns>Resulting profit margin</returns>
     public decimal CalculateMargin(string costInput, string priceInput)
+        {
+            decimal cost = ValidateCost(costInput);
+
+            decimal price = ValidatePrice(priceInput);
+
+           return CalculateMargin(cost, price);
+        }
+    private decimal CalculateMargin(decimal cost, decimal price)
     {
-      decimal cost = decimal.Parse(costInput);
-      decimal price = decimal.Parse(priceInput);
-
-      var margin = ((price - cost) / price) * 100M;
-
-      return margin;
+       return Math.Round(((price - cost) / price) * 100M);
     }
 
+        private static decimal ValidatePrice(string priceInput)
+        {
+            if (string.IsNullOrWhiteSpace(priceInput)) throw new ArgumentException("Please enter the price", "price");
+            bool success = decimal.TryParse(priceInput, out decimal price);
+            if (!success || price <= 0) throw new ArgumentException("The price must be a number greater than 0", "price");
+            return price;
+        }
+
+        private static decimal ValidateCost(string costInput)
+        {
+            if (string.IsNullOrWhiteSpace(costInput)) throw new ArgumentException("Please enter the cost", "cost");
+            bool success = decimal.TryParse(costInput, out decimal cost);
+            if (!success || cost < 0) throw new ArgumentException("The cost must be a number 0 or greater", "cost");
+            return cost;
+        }
 
 
-    /// <summary>
-    /// Calculates the total amount of the discount
-    /// </summary>
-    /// <returns></returns>
-    public decimal CalculateTotalDiscount(decimal price, Discount discount)
+
+        /// <summary>
+        /// Calculates the total amount of the discount
+        /// </summary>
+        /// <returns></returns>
+        public decimal CalculateTotalDiscount(decimal price, Discount discount)
     {
       if (price <= 0) throw new ArgumentException("Please enter the price");
 
-      if (discount is null) throw new ArgumentException("Please specify a discount");
+      if (discount?.PercentOff is null) throw new ArgumentException("Please specify a discount");
 
-      var discountAmount = price * (discount.PercentOff / 100);
+      var discountAmount = price * (discount.PercentOff.Value / 100);
 
       return discountAmount;
     }
